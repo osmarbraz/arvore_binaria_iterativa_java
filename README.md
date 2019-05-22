@@ -1,7 +1,7 @@
-# Implementação recursiva de Árvore Binária Encadeada em Java
-Operações implementadas recursivamente com árvore binárias encadeadas:<br>
+# Implementação iterativa de Árvore Binária Encadeada em Java
+Operações implementadas iterativamente com árvore binárias encadeadas:<br>
 - Inserir<br>
-- Excluir<br>
+- Excluir - Falta converter<br>
 - Caminhar Pré (ED)<br>
 - Caminhar Central (ED)<br>
 - Caminhar Pós (ED)<br>
@@ -11,4 +11,4 @@ Operações implementadas recursivamente com árvore binárias encadeadas:<br>
 - Contar nós da árvore<br>
 - Localizar nó na árvore<br>
 - Mostrar folhas da árvore<br>
-- Altura da árvore<br>
+- Altura da árvore - Falta converter<br>
