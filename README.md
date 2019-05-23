@@ -1,7 +1,7 @@
 # Implementação iterativa de Árvore Binária Encadeada em Java
 Operações implementadas iterativamente com árvore binárias encadeadas:<br>
 - Inserir<br>
-- Excluir - Falta converter<br>
+- Excluir<br>
 - Caminhar Pré (ED)<br>
 - Caminhar Central (ED)<br>
 - Caminhar Pós (ED)<br>

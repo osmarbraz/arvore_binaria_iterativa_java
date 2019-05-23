@@ -54,8 +54,10 @@ public class Arvore {
     public boolean inserir(int dado) {
         //Declara e instância um novo nó
         No novo = new No();
+        novo.setEsquerda(null);
         //Seta o dado
         novo.setDado(dado);
+        novo.setDireita(null);
 
         //Se _raiz está vazia
         if (getRaiz() == null) {
@@ -66,13 +68,18 @@ public class Arvore {
             No anterior = null;
             //Procura a posição
             while (atual != null) {
+                //Guarda o nó anterior antes de avançar
                 anterior = atual;
+                //Verifica se é para ir para esquerda ou direita
                 if (dado < atual.getDado()) {
+                    //Percorre a subárvore da esquerda de atual
                     atual = atual.getEsquerda();
                 } else {
+                    //Percorre a subárvore da direta de atual
                     atual = atual.getDireita();
                 }
             }
+            //Verifica se é um nó da esquerda ou direita
             if (dado < anterior.getDado()) {
                 anterior.setEsquerda(novo);
             } else {
@@ -92,22 +99,28 @@ public class Arvore {
      *
      * Falta converter para iterativo
      *
-     * @param _raiz Raiz da árvore.
-     * @param _sucessor Sucessor modificado.
+     * @param raiz Raiz da árvore.
+     * @param sucessor Sucessor modificado.
      * @return A árvore com o novo sucessor.
      */
-    private No sucessor(No _raiz, No _sucessor) {
+    private void sucessor(No raiz, No sucessor) {
+        No anterior = raiz;
         //Verifica se a subárvore da esquerda é diferente de nula
-        if (_sucessor.getEsquerda() != null) {
+        while (sucessor.getEsquerda() != null) {
+            anterior = sucessor;
             //Continua a busca do sucessor
-            _sucessor.setEsquerda(sucessor(_raiz, _sucessor.getEsquerda()));
-        } else {
-            //Encontrou o elemento altera do dado da subárvore com o balor do sucessor.
-            _raiz.setDado(_sucessor.getDado());
-            //Puxa a subárvore da direita para assumir o lugar.
-            _sucessor = _sucessor.getDireita();
+            sucessor = sucessor.getEsquerda();
         }
-        return _sucessor;
+        //Encontrou o elemento altera do dado da subárvore com o balor do sucessor.
+        raiz.setDado(sucessor.getDado());
+        //Verifica de onde veio o sucessor
+        if (anterior.getEsquerda() == sucessor) {
+            //Puxa a subárvore da esquerda para assumir o lugar.
+            anterior.setEsquerda(sucessor.getEsquerda());
+        } else {
+            //Puxa a subárvore da direita para assumir o lugar.
+            anterior.setDireita(sucessor.getEsquerda());
+        }
     }
 
     /**
@@ -115,45 +128,65 @@ public class Arvore {
      *
      * Falta converter para iterativo
      *
-     * @param _raiz Raiz da subárvore.
      * @param dado Valor a ser encontrado e excluído da árvore.
-     * @return Retorna a árvore modificada.
+     * @return Retorna Verdadeiro se conseguir realizar a exclusão.
      */
-    public No remover(No _raiz, int dado) {
-        //Verifica se a _raiz não está vazia.
-        if (_raiz != null) {
-            //Verifica se o valor é menor que o dado da _raiz
-            if (dado < _raiz.getDado()) {
-                //Percorre a subárvore da esquerda de _raiz
-                _raiz.setEsquerda(this.remover(_raiz.getEsquerda(), dado));
-
+    public boolean remover(int dado) {
+        No atual = getRaiz();
+        No anterior = null;
+        //Percorre a árvore até o fim ou encontrar o valor
+        while ((atual != null) && (atual.getDado() != dado)) {
+            //Guarda o nó anterior
+            anterior = atual;
+            //Verifica se o valor é menor ou maior que o dado de atual
+            if (dado < atual.getDado()) {
+                //Percorre a subárvore da esquerda de atual
+                atual = atual.getEsquerda();
             } else {
-                //Verifica se o valor é maior que o dado da raiz
-                if (dado > _raiz.getDado()) {
-                    //Percorre a subárvore da direita de _raiz
-                    _raiz.setDireita(this.remover(_raiz.getDireita(), dado));
-
+                //Percorre a subárvore da direta de atual
+                atual = atual.getDireita();
+            }
+        }
+        //Encontrou o nó a ser excluído
+        if (atual != null) {
+            No sucessor = null;
+            //Se tem zero ou um filho
+            if ((atual.getEsquerda() == null) || (atual.getDireita() == null)) {
+                //Verifica se subárvore da esquerda é nula
+                if (atual.getEsquerda() == null) {
+                    //O sucessor está na subárvore da direita
+                    sucessor = atual.getDireita();
                 } else {
-                    //Verifica se  subárvore da esquerda está nula
-                    if (_raiz.getEsquerda() == null) {
-                        //Puxa a subárvore da direita.
-                        _raiz = _raiz.getDireita();
-                    } else {
-                        //Verifica se  subárvore da direta está nula
-                        if (_raiz.getDireita() == null) {
-                            //Puxa a subárvore da esquerda.
-                            _raiz = _raiz.getEsquerda();
-                        } else {
-                            //Busca o sucessor da _raiz apartir da subárvore da direita.
-                            _raiz.setDireita(sucessor(_raiz, _raiz.getDireita()));
-                        }
+                    //Verifica se subárvore da direita é nula
+                    if (atual.getDireita() == null) {
+                        //O sucessor está na subárvore da esquerda
+                        sucessor = atual.getEsquerda();
                     }
                 }
+                //Verifica onde deve ser inserido o sucessor na raiz, direita ou esquerda do anterior
+                //Se anterior é nulo o elemento a ser excluído é a raiz
+                if (anterior == null) {
+                    //Define a raiz com o sucessor
+                    setRaiz(sucessor);
+                } else {
+                    //Se o dado a ser excluído é menor que o anterior
+                    if (dado < anterior.getDado()) {
+                        //O sucessor dever ser colocado na esquerda
+                        anterior.setEsquerda(sucessor);
+                    } else {
+                        //Caso contrário o sucessor dever ser colocado na direita
+                        anterior.setDireita(sucessor);
+                    }
+                }
+            } else { //Se o nó têm dois filhos
+                //Busca o sucessor de atual apartir da subárvore da direita.
+                sucessor(atual, atual.getDireita());
             }
         } else {
             System.out.println("Valor não existe na arvore");
+            return false;
         }
-        return _raiz;
+        return true;
     }
 
     /**
@@ -165,6 +198,7 @@ public class Arvore {
      *
      */
     public void caminharPre() {
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         pilha.empilhar(atual);
@@ -190,6 +224,7 @@ public class Arvore {
      */
     private String caminharPreString() {
         String str = "";
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         pilha.empilhar(atual);
@@ -215,6 +250,7 @@ public class Arvore {
      */
     public void caminharCentral() {
         boolean fim = false;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         while (fim == false) {
@@ -246,6 +282,7 @@ public class Arvore {
     private String caminharCentralString(No _raiz) {
         String str = "";
         boolean fim = false;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         while (fim == false) {
@@ -276,6 +313,7 @@ public class Arvore {
     public void caminharPos() {
         boolean fim = false;
         int vez = 0;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         while (fim == false) {
@@ -313,6 +351,7 @@ public class Arvore {
         String str = "";
         boolean fim = false;
         int vez = 0;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         while (fim == false) {
@@ -335,7 +374,6 @@ public class Arvore {
                 }
             }
         }
-
         return str;
     }
 
@@ -348,6 +386,7 @@ public class Arvore {
      *
      */
     public void caminharPreInvertido() {
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         pilha.empilhar(atual);
@@ -373,6 +412,7 @@ public class Arvore {
      */
     private String caminharPreInvertidoString() {
         String str = "";
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         pilha.empilhar(atual);
@@ -395,12 +435,12 @@ public class Arvore {
      * binária. Visita a subárvore da direta, utiliza o dado e depois visita a
      * subárvore da esquerda.
      *
-     * @param _raiz Raiz da subárvore.
      */
     public void caminharCentralInvertido() {
         boolean fim = false;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
-        No atual = raiz;
+        No atual = getRaiz();
         while (fim == false) {
             while (atual != null) {
                 pilha.empilhar(atual);
@@ -429,8 +469,9 @@ public class Arvore {
     private String caminharCentralInvertidoString() {
         String str = "";
         boolean fim = false;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
-        No atual = raiz;
+        No atual = getRaiz();
         while (fim == false) {
             while (atual != null) {
                 pilha.empilhar(atual);
@@ -459,8 +500,9 @@ public class Arvore {
     public void caminharPosInvertido() {
         boolean fim = false;
         int vez = 0;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
-        No atual = raiz;
+        No atual = getRaiz();
         while (fim == false) {
             while (atual != null) {
                 pilha.empilhar(atual, 1);
@@ -496,8 +538,9 @@ public class Arvore {
         String str = "";
         boolean fim = false;
         int vez = 0;
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
-        No atual = raiz;
+        No atual = getRaiz();
         while (fim == false) {
             while (atual != null) {
                 pilha.empilhar(atual, 1);
@@ -524,13 +567,14 @@ public class Arvore {
     /**
      * Conta os nós de uma árvore binária.
      *
+     * Utiliza o caminhar pré para contar os nós.
+     *
      * @param _raiz
      * @return A quantidade de nós da árvore.
      */
     public int contarNo(No _raiz) {
         int cont = 0;
-
-        //Utiliza o caminhar pré para contar os nós
+        //Declara e uma instância uma pilha
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         pilha.empilhar(atual);
@@ -538,7 +582,7 @@ public class Arvore {
             atual = pilha.acessarTopo();
             pilha.desempilhar();
             if (atual != null) {
-                cont += 1;
+                cont = cont + 1;
                 pilha.empilhar(atual.getDireita());
                 pilha.empilhar(atual.getEsquerda());
             }
@@ -550,14 +594,20 @@ public class Arvore {
      * Procura um dado na árvore binária.
      *
      * @param dado O valor de um nó a ser procurado na lista.
+     *
      * @return Verdadeiro se encontrou o dado na árvore binária.
      */
     public boolean procurarValor(int dado) {
+        //Considera a raiz como atual
         No atual = getRaiz();
+        //Enquanto atual diferente de nulo e não encontrar o dado em um nó
         while ((atual != null) && (atual.getDado() != dado)) {
+            //Se o dado é menor que o valor do nó atual
             if (dado < atual.getDado()) {
+                //Procura na subárvore da esquerda
                 atual = atual.getEsquerda();
             } else {
+                //Caso contrário procura na subárvore da direita
                 atual = atual.getDireita();
             }
         }
@@ -571,13 +621,15 @@ public class Arvore {
     /**
      * Retorna uma String com os valores dos nós folhas da árvore binária.
      *
+     * Utiliza o caminhar pré para encontrar as folhas.
+     *
      * @param _raiz Uma raiz de uma subárvore.
+     *
      * @return Uma String com os valores dos nós folhas da árvore binária.
      */
     public String encontrarFolhas(No _raiz) {
         String str = "";
-
-        //Utiliza o caminhar pré para encontrar as folhas
+        //Declara e instância uma pilha        
         Pilha pilha = new Pilha();
         No atual = getRaiz();
         pilha.empilhar(atual);

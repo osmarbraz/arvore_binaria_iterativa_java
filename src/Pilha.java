@@ -132,5 +132,4 @@ public class Pilha {
     public String paraString() {
         return getInicio() + "";
     }
-
 }

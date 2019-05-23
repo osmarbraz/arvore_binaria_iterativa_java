@@ -79,9 +79,9 @@ public class Principal {
                 }
                 case 2: {
                     //Preenche o valor do dado                    
-                    int valor = Integer.parseInt(JOptionPane.showInputDialog("Digite o valor a ser removido"));
+                    int dado = Integer.parseInt(JOptionPane.showInputDialog("Digite o valor a ser removido"));
                     //Remove o valor da árvore
-                    ipe.setRaiz(ipe.remover(ipe.getRaiz(), valor));
+                    ipe.remover(dado);
                     break;
                 }
                 case 3: {
